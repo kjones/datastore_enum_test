@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:amplify_datastore_plugin_interface/src/types/models/subscription_event.dart';
 import 'package:flutter/material.dart';
 
 import 'package:amplify_core/amplify_core.dart';
@@ -41,30 +44,71 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final String _testId = 'e2be8920-69b9-41ce-845f-321f3ac3455e';
-  TestModel _testModel;
+  // final String _testId = 'e2be8920-69b9-41ce-845f-321f3ac3455e';
 
-  void _incrementCounter() async {
+  TestModel _testModel;
+  StreamSubscription<SubscriptionEvent<TestModel>> _streamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _streamSubscription = Amplify.DataStore.observe(TestModel.classType)
+        .listen(_onTestModelDataEvent);
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _onTestModelDataEvent(SubscriptionEvent<TestModel> event) {
+    switch (event.eventType) {
+      case EventType.create:
+      case EventType.update:
+        setState(() {
+          _testModel = event.item;
+        });
+        break;
+      case EventType.delete:
+        setState(() {
+          _testModel = null;
+        });
+        break;
+    }
+  }
+
+  void _incrementTestModel() async {
     var testModel = _testModel;
     if (testModel == null) {
-      final queryResult = await Amplify.DataStore.query(TestModel.classType,
-          where: TestModel.ID.eq(_testId));
+      final queryResult = await Amplify.DataStore.query(TestModel.classType);
       if (queryResult.isEmpty) {
-        testModel = TestModel(id: _testId, enumVal: TestEnum.VALUE_ONE);
+        testModel = TestModel(
+          id: null,
+          testInt: 0,
+          testString: 'testString-0',
+        );
         await Amplify.DataStore.save(testModel);
       } else {
         testModel = queryResult[0];
+        setState(() {
+          _testModel = testModel;
+        });
       }
     } else {
-      final nextVal = testModel.enumVal == TestEnum.VALUE_ONE
-          ? TestEnum.VALUE_TWO
-          : TestEnum.VALUE_ONE;
-      testModel = TestModel(id: _testId, enumVal: nextVal);
+      testModel = TestModel(
+        id: testModel.id,
+        testInt: testModel.testInt + 1,
+        testString: 'string-${testModel.testInt + 1}',
+      );
       await Amplify.DataStore.save(testModel);
     }
-    setState(() {
-      _testModel = testModel;
-    });
+  }
+
+  void _deleteTestModel() async {
+    if (_testModel != null) {
+      await Amplify.DataStore.delete(_testModel);
+    }
   }
 
   @override
@@ -76,15 +120,29 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('TestModel:' + _testModel.toString()),
+            Text('TestModel'),
+            if (_testModel == null) Text('missing'),
+            if (_testModel != null) Text('id: ${_testModel.id}'),
+            if (_testModel != null) Text('testInt: ${_testModel.testInt}'),
+            if (_testModel != null)
+              Text('testString: ${_testModel.testString}'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'update',
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FloatingActionButton(
+            onPressed: _deleteTestModel,
+            child: Icon(Icons.delete),
+          ),
+          FloatingActionButton(
+            onPressed: _incrementTestModel,
+            child: Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

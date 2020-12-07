@@ -1,19 +1,5 @@
 type TestModel @model {
   id: ID!
-
-  enumVal: TestEnum!
-
-  # Works locally but is rejected by AppSync if set to null.
-  nullableEnumVal: TestEnum
-
-  # Any of the following generates a model that won't build.
-  # enumList: [TestEnum!]!
-  # enumNullableList: [TestEnum!]
-  # nullableEnumList: [TestEnum]!
-  # nullableEnumnNullableList: [TestEnum]
-}
-
-enum TestEnum {
-  VALUE_ONE
-  VALUE_TWO
+  testInt: Int!
+  testString: String!
 }

@@ -8,8 +8,8 @@
           "defaultAuthentication": {
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7,
-              "description": "DataStore Test API Key"
+              "apiKeyExpirationDays": 30,
+              "description": "A new key"
             }
           },
           "additionalAuthenticationProviders": []

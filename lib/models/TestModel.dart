@@ -13,7 +13,6 @@
 * permissions and limitations under the License.
 */
 
-import 'ModelProvider.dart';
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,8 +21,8 @@ import 'package:flutter/foundation.dart';
 class TestModel extends Model {
   static const classType = const TestModelType();
   final String id;
-  final TestEnum enumVal;
-  final TestEnum nullableEnumVal;
+  final int testInt;
+  final String testString;
 
   @override
   getInstanceType() => classType;
@@ -34,16 +33,16 @@ class TestModel extends Model {
   }
 
   const TestModel._internal(
-      {@required this.id, @required this.enumVal, this.nullableEnumVal});
+      {@required this.id, @required this.testInt, @required this.testString});
 
   factory TestModel(
       {@required String id,
-      @required TestEnum enumVal,
-      TestEnum nullableEnumVal}) {
+      @required int testInt,
+      @required String testString}) {
     return TestModel._internal(
         id: id == null ? UUID.getUUID() : id,
-        enumVal: enumVal,
-        nullableEnumVal: nullableEnumVal);
+        testInt: testInt,
+        testString: testString);
   }
 
   bool equals(Object other) {
@@ -55,8 +54,8 @@ class TestModel extends Model {
     if (identical(other, this)) return true;
     return other is TestModel &&
         id == other.id &&
-        enumVal == other.enumVal &&
-        nullableEnumVal == other.nullableEnumVal;
+        testInt == other.testInt &&
+        testString == other.testString;
   }
 
   @override
@@ -68,8 +67,9 @@ class TestModel extends Model {
 
     buffer.write("TestModel {");
     buffer.write("id=" + id + ", ");
-    buffer.write("enumVal=" + enumToString(enumVal) + ", ");
-    buffer.write("nullableEnumVal=" + enumToString(nullableEnumVal));
+    buffer.write(
+        "testInt=" + (testInt != null ? testInt.toString() : "null") + ", ");
+    buffer.write("testString=" + testString);
     buffer.write("}");
 
     return buffer.toString();
@@ -77,30 +77,25 @@ class TestModel extends Model {
 
   TestModel copyWith(
       {@required String id,
-      @required TestEnum enumVal,
-      TestEnum nullableEnumVal}) {
+      @required int testInt,
+      @required String testString}) {
     return TestModel(
         id: id ?? this.id,
-        enumVal: enumVal ?? this.enumVal,
-        nullableEnumVal: nullableEnumVal ?? this.nullableEnumVal);
+        testInt: testInt ?? this.testInt,
+        testString: testString ?? this.testString);
   }
 
   TestModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        enumVal = enumFromString<TestEnum>(json['enumVal'], TestEnum.values),
-        nullableEnumVal =
-            enumFromString<TestEnum>(json['nullableEnumVal'], TestEnum.values);
+        testInt = json['testInt'],
+        testString = json['testString'];
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'enumVal': enumToString(enumVal),
-        'nullableEnumVal': enumToString(nullableEnumVal)
-      };
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'testInt': testInt, 'testString': testString};
 
   static final QueryField ID = QueryField(fieldName: "testModel.id");
-  static final QueryField ENUMVAL = QueryField(fieldName: "enumVal");
-  static final QueryField NULLABLEENUMVAL =
-      QueryField(fieldName: "nullableEnumVal");
+  static final QueryField TESTINT = QueryField(fieldName: "testInt");
+  static final QueryField TESTSTRING = QueryField(fieldName: "testString");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "TestModel";
@@ -109,14 +104,14 @@ class TestModel extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: TestModel.ENUMVAL,
+        key: TestModel.TESTINT,
         isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
+        ofType: ModelFieldType(ModelFieldTypeEnum.int)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: TestModel.NULLABLEENUMVAL,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
+        key: TestModel.TESTSTRING,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 

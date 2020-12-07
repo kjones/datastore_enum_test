@@ -21,5 +21,11 @@ dev_dependencies:
   analyzer:
   pedantic:
 
+# dependency_overrides:
+#   amplify_core:
+#     path: ../amplify-flutter/packages/amplify_core
+#   amplify_datastore:
+#     path: ../amplify-flutter/packages/amplify_datastore
+
 flutter:
   uses-material-design: true
