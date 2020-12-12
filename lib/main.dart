@@ -47,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // final String _testId = 'e2be8920-69b9-41ce-845f-321f3ac3455e';
 
   TestModel _testModel;
+  String _lastEvent;
   StreamSubscription<SubscriptionEvent<TestModel>> _streamSubscription;
 
   @override
@@ -54,6 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _streamSubscription = Amplify.DataStore.observe(TestModel.classType)
         .listen(_onTestModelDataEvent);
+
+    AmplifyDataStore.events.listenToDataStore((event) {
+      final eventName = event['eventName'];
+      setState(() {
+        _lastEvent = eventName;
+      });
+    });
   }
 
   @override
@@ -128,6 +136,11 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_testModel != null) Text('testInt: ${_testModel.testInt}'),
             if (_testModel != null)
               Text('testString: ${_testModel.testString}'),
+            if (_lastEvent != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Text('lastEvent: $_lastEvent'),
+              ),
           ],
         ),
       ),
