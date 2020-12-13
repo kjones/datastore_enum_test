@@ -108,6 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
         id: testModel.id,
         testInt: testModel.testInt + 1,
         testString: 'string-${testModel.testInt + 1}',
+        nullableInt:
+            (testModel.nullableInt == null) ? testModel.testInt + 1 : null,
       );
       await Amplify.DataStore.save(testModel);
     }
@@ -136,6 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
             if (_testModel != null) Text('testInt: ${_testModel.testInt}'),
             if (_testModel != null)
               Text('testString: ${_testModel.testString}'),
+            if (_testModel != null)
+              Text('nullableInt: ${_testModel.nullableInt}'),
             if (_lastEvent != null)
               Padding(
                 padding: const EdgeInsets.only(top: 40),

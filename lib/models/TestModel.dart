@@ -23,6 +23,7 @@ class TestModel extends Model {
   final String id;
   final int testInt;
   final String testString;
+  final int nullableInt;
 
   @override
   getInstanceType() => classType;
@@ -33,16 +34,21 @@ class TestModel extends Model {
   }
 
   const TestModel._internal(
-      {@required this.id, @required this.testInt, @required this.testString});
+      {@required this.id,
+      @required this.testInt,
+      @required this.testString,
+      this.nullableInt});
 
   factory TestModel(
       {@required String id,
       @required int testInt,
-      @required String testString}) {
+      @required String testString,
+      int nullableInt}) {
     return TestModel._internal(
         id: id == null ? UUID.getUUID() : id,
         testInt: testInt,
-        testString: testString);
+        testString: testString,
+        nullableInt: nullableInt);
   }
 
   bool equals(Object other) {
@@ -55,7 +61,8 @@ class TestModel extends Model {
     return other is TestModel &&
         id == other.id &&
         testInt == other.testInt &&
-        testString == other.testString;
+        testString == other.testString &&
+        nullableInt == other.nullableInt;
   }
 
   @override
@@ -69,7 +76,9 @@ class TestModel extends Model {
     buffer.write("id=" + id + ", ");
     buffer.write(
         "testInt=" + (testInt != null ? testInt.toString() : "null") + ", ");
-    buffer.write("testString=" + testString);
+    buffer.write("testString=" + testString + ", ");
+    buffer.write("nullableInt=" +
+        (nullableInt != null ? nullableInt.toString() : "null"));
     buffer.write("}");
 
     return buffer.toString();
@@ -78,24 +87,32 @@ class TestModel extends Model {
   TestModel copyWith(
       {@required String id,
       @required int testInt,
-      @required String testString}) {
+      @required String testString,
+      int nullableInt}) {
     return TestModel(
         id: id ?? this.id,
         testInt: testInt ?? this.testInt,
-        testString: testString ?? this.testString);
+        testString: testString ?? this.testString,
+        nullableInt: nullableInt ?? this.nullableInt);
   }
 
   TestModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         testInt = json['testInt'],
-        testString = json['testString'];
+        testString = json['testString'],
+        nullableInt = json['nullableInt'];
 
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'testInt': testInt, 'testString': testString};
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'testInt': testInt,
+        'testString': testString,
+        'nullableInt': nullableInt
+      };
 
   static final QueryField ID = QueryField(fieldName: "testModel.id");
   static final QueryField TESTINT = QueryField(fieldName: "testInt");
   static final QueryField TESTSTRING = QueryField(fieldName: "testString");
+  static final QueryField NULLABLEINT = QueryField(fieldName: "nullableInt");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "TestModel";
@@ -112,6 +129,11 @@ class TestModel extends Model {
         key: TestModel.TESTSTRING,
         isRequired: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.NULLABLEINT,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.int)));
   });
 }
 

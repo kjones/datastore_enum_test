@@ -2,4 +2,5 @@ type TestModel @model {
   id: ID!
   testInt: Int!
   testString: String!
+  nullableInt: Int
 }
