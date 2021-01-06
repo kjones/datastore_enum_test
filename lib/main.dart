@@ -1,13 +1,12 @@
 import 'dart:async';
 
+import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_datastore_plugin_interface/src/types/models/subscription_event.dart';
 import 'package:flutter/material.dart';
 
-import 'package:amplify_core/amplify_core.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-
-import 'models/ModelProvider.dart';
 import 'amplifyconfiguration.dart';
+import 'models/ModelProvider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _streamSubscription = Amplify.DataStore.observe(TestModel.classType)
         .listen(_onTestModelDataEvent);
 
-    AmplifyDataStore.events.listenToDataStore((event) {
-      final eventName = event['eventName'];
+    AmplifyDataStore.events.listenToDataStore((dynamic event) {
+      final eventName = event['eventName'] as String;
       setState(() {
         _lastEvent = eventName;
       });

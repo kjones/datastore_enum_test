@@ -13,6 +13,8 @@
 * permissions and limitations under the License.
 */
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'package:flutter/foundation.dart';
 
@@ -85,10 +87,7 @@ class TestModel extends Model {
   }
 
   TestModel copyWith(
-      {@required String id,
-      @required int testInt,
-      @required String testString,
-      int nullableInt}) {
+      {String id, int testInt, String testString, int nullableInt}) {
     return TestModel(
         id: id ?? this.id,
         testInt: testInt ?? this.testInt,

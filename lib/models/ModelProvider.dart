@@ -13,6 +13,8 @@
 * permissions and limitations under the License.
 */
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'TestModel.dart';
 
@@ -26,4 +28,20 @@ class ModelProvider implements ModelProviderInterface {
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
+
+  ModelType getModelTypeByModelName(String modelName) {
+    switch (modelName) {
+      case "TestModel":
+        {
+          return TestModel.classType;
+        }
+        break;
+      default:
+        {
+          throw Exception(
+              "Failed to find model in model provider for model name: " +
+                  modelName);
+        }
+    }
+  }
 }
