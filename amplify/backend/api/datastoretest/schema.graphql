@@ -1,6 +1,29 @@
 type TestModel @model {
   id: ID!
+
+  # ----------- Basic -----------
+
   testInt: Int!
   testString: String!
   nullableInt: Int
+  intList: [Int!]!
+
+  # ----------- Enums -----------
+
+  enumVal: TestEnum!
+
+  # Android - Appears to works locally but is rejected by AppSync if set to null.
+  # iOS - Seems like this won't get saved at all, even locally, if set to null.
+  # nullableEnumVal: TestEnum
+
+  # Any of the following generates a .dart model file that won't build.
+  # enumList: [TestEnum!]!
+  # enumNullableList: [TestEnum!]
+  # nullableEnumList: [TestEnum]!
+  # nullableEnumNullableList: [TestEnum]
+}
+
+enum TestEnum {
+  VALUE_ONE
+  VALUE_TWO
 }

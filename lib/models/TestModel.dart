@@ -15,7 +15,9 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'ModelProvider.dart';
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 /** This is an auto generated class representing the TestModel type in your schema. */
@@ -26,6 +28,8 @@ class TestModel extends Model {
   final int testInt;
   final String testString;
   final int nullableInt;
+  final List<int> intList;
+  final TestEnum enumVal;
 
   @override
   getInstanceType() => classType;
@@ -39,18 +43,24 @@ class TestModel extends Model {
       {@required this.id,
       @required this.testInt,
       @required this.testString,
-      this.nullableInt});
+      this.nullableInt,
+      @required this.intList,
+      @required this.enumVal});
 
   factory TestModel(
       {@required String id,
       @required int testInt,
       @required String testString,
-      int nullableInt}) {
+      int nullableInt,
+      @required List<int> intList,
+      @required TestEnum enumVal}) {
     return TestModel._internal(
         id: id == null ? UUID.getUUID() : id,
         testInt: testInt,
         testString: testString,
-        nullableInt: nullableInt);
+        nullableInt: nullableInt,
+        intList: intList != null ? List.unmodifiable(intList) : intList,
+        enumVal: enumVal);
   }
 
   bool equals(Object other) {
@@ -64,7 +74,9 @@ class TestModel extends Model {
         id == other.id &&
         testInt == other.testInt &&
         testString == other.testString &&
-        nullableInt == other.nullableInt;
+        nullableInt == other.nullableInt &&
+        DeepCollectionEquality().equals(intList, other.intList) &&
+        enumVal == other.enumVal;
   }
 
   @override
@@ -80,38 +92,55 @@ class TestModel extends Model {
         "testInt=" + (testInt != null ? testInt.toString() : "null") + ", ");
     buffer.write("testString=" + testString + ", ");
     buffer.write("nullableInt=" +
-        (nullableInt != null ? nullableInt.toString() : "null"));
+        (nullableInt != null ? nullableInt.toString() : "null") +
+        ", ");
+    buffer.write(
+        "intList=" + (intList != null ? intList.toString() : "null") + ", ");
+    buffer.write("enumVal=" + enumToString(enumVal));
     buffer.write("}");
 
     return buffer.toString();
   }
 
   TestModel copyWith(
-      {String id, int testInt, String testString, int nullableInt}) {
+      {String id,
+      int testInt,
+      String testString,
+      int nullableInt,
+      List<int> intList,
+      TestEnum enumVal}) {
     return TestModel(
         id: id ?? this.id,
         testInt: testInt ?? this.testInt,
         testString: testString ?? this.testString,
-        nullableInt: nullableInt ?? this.nullableInt);
+        nullableInt: nullableInt ?? this.nullableInt,
+        intList: intList ?? this.intList,
+        enumVal: enumVal ?? this.enumVal);
   }
 
   TestModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         testInt = json['testInt'],
         testString = json['testString'],
-        nullableInt = json['nullableInt'];
+        nullableInt = json['nullableInt'],
+        intList = json['intList']?.cast<int>(),
+        enumVal = enumFromString<TestEnum>(json['enumVal'], TestEnum.values);
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'testInt': testInt,
         'testString': testString,
-        'nullableInt': nullableInt
+        'nullableInt': nullableInt,
+        'intList': intList,
+        'enumVal': enumToString(enumVal)
       };
 
   static final QueryField ID = QueryField(fieldName: "testModel.id");
   static final QueryField TESTINT = QueryField(fieldName: "testInt");
   static final QueryField TESTSTRING = QueryField(fieldName: "testString");
   static final QueryField NULLABLEINT = QueryField(fieldName: "nullableInt");
+  static final QueryField INTLIST = QueryField(fieldName: "intList");
+  static final QueryField ENUMVAL = QueryField(fieldName: "enumVal");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "TestModel";
@@ -133,6 +162,18 @@ class TestModel extends Model {
         key: TestModel.NULLABLEINT,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.int)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.INTLIST,
+        isRequired: true,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.int))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.ENUMVAL,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
   });
 }
 

@@ -94,6 +94,15 @@ class _MyHomePageState extends State<MyHomePage> {
           id: null,
           testInt: 0,
           testString: 'testString-0',
+          enumVal: TestEnum.VALUE_ONE,
+          intList: [1, 2, 3],
+          // enumList: [TestEnum.VALUE_ONE, TestEnum.VALUE_TWO],
+          // nullableEnumList: [
+          //   null,
+          //   TestEnum.VALUE_ONE,
+          //   null,
+          //   TestEnum.VALUE_TWO
+          // ],
         );
         await Amplify.DataStore.save(testModel);
       } else {
@@ -103,12 +112,27 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     } else {
+      final nextEnumVal = testModel.enumVal == TestEnum.VALUE_ONE
+          ? TestEnum.VALUE_TWO
+          : TestEnum.VALUE_ONE;
+      // final nextEnumList = testModel.enumList.reversed.toList();
+      // final nextNullableEnumList = testModel.nullableEnumList.reversed.toList();
       testModel = TestModel(
         id: testModel.id,
         testInt: testModel.testInt + 1,
         testString: 'string-${testModel.testInt + 1}',
         nullableInt:
-            (testModel.nullableInt == null) ? testModel.testInt + 1 : null,
+            testModel.nullableInt == null ? testModel.testInt + 1 : null,
+        intList: testModel.intList.reversed.toList(),
+        enumVal: nextEnumVal,
+        // nullableEnumVal: testModel.nullableEnumVal == null ? nextEnumVal : null,
+        // enumList: nextEnumList,
+        // nullableEnumList: nextNullableEnumList,
+        // enumNullableList:
+        //     testModel.enumNullableList == null ? nextEnumList : null,
+        // nullableEnumNullableList: testModel.nullableEnumNullableList == null
+        //     ? nextNullableEnumList
+        //     : null,
       );
       await Amplify.DataStore.save(testModel);
     }
@@ -132,13 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('TestModel'),
-            if (_testModel == null) Text('missing'),
-            if (_testModel != null) Text('id: ${_testModel.id}'),
-            if (_testModel != null) Text('testInt: ${_testModel.testInt}'),
-            if (_testModel != null)
-              Text('testString: ${_testModel.testString}'),
-            if (_testModel != null)
-              Text('nullableInt: ${_testModel.nullableInt}'),
+            if (_testModel != null) ..._testModelView(),
             if (_lastEvent != null)
               Padding(
                 padding: const EdgeInsets.only(top: 40),
@@ -162,4 +180,15 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+  List<Widget> _testModelView() => <Widget>[
+        Text('missing'),
+        Text('id: ${_testModel.id}'),
+        Text('testInt: ${_testModel.testInt}'),
+        Text('testString: ${_testModel.testString}'),
+        Text('nullableInt: ${_testModel.nullableInt}'),
+        Text('intList: ${_testModel.intList}'),
+        Text('enumVal: ${_testModel.enumVal}'),
+        // Text('enumList: ${_testModel.enumList}'),
+      ];
 }

@@ -18,11 +18,12 @@
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'TestModel.dart';
 
+export 'TestEnum.dart';
 export 'TestModel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "341464c8f0f39bb5ee898ab6b585460f";
+  String version = "aa61fd0547b19c6071038ca1a105d895";
   @override
   List<ModelSchema> modelSchemas = [TestModel.schema];
   static final ModelProvider _instance = ModelProvider();
