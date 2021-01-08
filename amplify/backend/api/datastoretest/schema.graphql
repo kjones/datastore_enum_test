@@ -6,7 +6,9 @@ type TestModel @model {
   testInt: Int!
   testString: String!
   nullableInt: Int
-  intList: [Int!]!
+
+  # iOS - Lists of any type not currently working. 0.0.1-dev.6
+  # intList: [Int!]!
 
   # ----------- Enums -----------
 
@@ -14,7 +16,7 @@ type TestModel @model {
 
   # Android - Appears to works locally but is rejected by AppSync if set to null.
   # iOS - Seems like this won't get saved at all, even locally, if set to null.
-  # nullableEnumVal: TestEnum
+  nullableEnumVal: TestEnum
 
   # Any of the following generates a .dart model file that won't build.
   # enumList: [TestEnum!]!

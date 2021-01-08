@@ -43,8 +43,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // final String _testId = 'e2be8920-69b9-41ce-845f-321f3ac3455e';
-
   TestModel _testModel;
   String _lastEvent;
   StreamSubscription<SubscriptionEvent<TestModel>> _streamSubscription;
@@ -95,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           testInt: 0,
           testString: 'testString-0',
           enumVal: TestEnum.VALUE_ONE,
-          intList: [1, 2, 3],
+          // intList: [1, 2, 3],
           // enumList: [TestEnum.VALUE_ONE, TestEnum.VALUE_TWO],
           // nullableEnumList: [
           //   null,
@@ -123,9 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
         testString: 'string-${testModel.testInt + 1}',
         nullableInt:
             testModel.nullableInt == null ? testModel.testInt + 1 : null,
-        intList: testModel.intList.reversed.toList(),
+        // intList: testModel.intList.reversed.toList(),
         enumVal: nextEnumVal,
-        // nullableEnumVal: testModel.nullableEnumVal == null ? nextEnumVal : null,
+        nullableEnumVal: testModel.nullableEnumVal == null ? nextEnumVal : null,
         // enumList: nextEnumList,
         // nullableEnumList: nextNullableEnumList,
         // enumNullableList:
@@ -156,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('TestModel'),
+            if (_testModel == null) Text('missing'),
             if (_testModel != null) ..._testModelView(),
             if (_lastEvent != null)
               Padding(
@@ -182,13 +181,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> _testModelView() => <Widget>[
-        Text('missing'),
         Text('id: ${_testModel.id}'),
         Text('testInt: ${_testModel.testInt}'),
         Text('testString: ${_testModel.testString}'),
         Text('nullableInt: ${_testModel.nullableInt}'),
-        Text('intList: ${_testModel.intList}'),
+        // Text('intList: ${_testModel.intList}'),
         Text('enumVal: ${_testModel.enumVal}'),
+        Text('nullableEnumVal: ${_testModel.nullableEnumVal}'),
         // Text('enumList: ${_testModel.enumList}'),
       ];
 }
