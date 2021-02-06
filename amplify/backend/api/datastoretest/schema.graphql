@@ -4,22 +4,41 @@ type TestModel @model {
   # ----------- Basic -----------
 
   testInt: Int!
+  testFloat: Float!
   testString: String!
+  testBool: Boolean!
+  testEnum: TestEnum!
+
   nullableInt: Int
+  nullableFloat: Float
+  nullableString: String
+  nullableBool: Boolean
+  nullableEnum: TestEnum
 
-  # iOS - Lists of any type not currently working. 0.0.1-dev.6
+  # iOS - Lists of any type not currently working. 0.0.2-dev.1
+  # Android
+  #     All working except intList. intList appears to work locally
+  #     but fails converting double to int on models syncd from the
+  #     backend. Using ".cast<int>()" doesn't work when underlying
+  #     is a List<double>.
+  intList: [Int]
+  floatList: [Float]
+  stringList: [String]
+  boolList: [Boolean]
+  enumList: [TestEnum]
+
+  # TODO:
+  #   Need to make sure these work also. In the past they have
+  #   generated invalid Flutter model code.
   # intList: [Int!]!
-
-  # ----------- Enums -----------
-
-  enumVal: TestEnum!
-
-  # Android - Appears to works locally but is rejected by AppSync if set to null.
-  # iOS - Seems like this won't get saved at all, even locally, if set to null.
-  nullableEnumVal: TestEnum
-
-  # Any of the following generates a .dart model file that won't build.
+  # floatList: [Float!]!
+  # stringList: [String!]!
+  # boolList: [Boolean!]!
   # enumList: [TestEnum!]!
+
+  # TODO:
+  #   Need to test the following. These previously would generate
+  #   a .dart model file that wouldn't build.
   # enumNullableList: [TestEnum!]
   # nullableEnumList: [TestEnum]!
   # nullableEnumNullableList: [TestEnum]

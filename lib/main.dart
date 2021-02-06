@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:amplify_core/amplify_core.dart';
+import 'package:amplify_flutter/amplify.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_datastore_plugin_interface/src/types/models/subscription_event.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +11,12 @@ import 'models/ModelProvider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final amplifyInstance = Amplify();
   var datastorePlugin = AmplifyDataStore(modelProvider: ModelProvider.instance);
-  await amplifyInstance.addPlugin(dataStorePlugins: [datastorePlugin]);
-  await amplifyInstance.configure(amplifyconfig);
+  await Amplify.addPlugin(datastorePlugin);
+  await Amplify.configure(amplifyconfig);
+
+  // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
+  var _ = await Amplify.DataStore.query(TestModel.classType);
 
   runApp(MyApp());
 }
@@ -50,14 +52,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _streamSubscription = Amplify.DataStore.observe(TestModel.classType)
-        .listen(_onTestModelDataEvent);
 
-    AmplifyDataStore.events.listenToDataStore((dynamic event) {
-      final eventName = event['eventName'] as String;
+    Amplify.Hub.listen([HubChannel.DataStore], (dynamic event) async {
+      final eventName = event.eventName as String;
       setState(() {
         _lastEvent = eventName;
       });
+
+      if (eventName == 'ready') {
+        _streamSubscription = Amplify.DataStore.observe(TestModel.classType)
+            .listen(_onTestModelDataEvent);
+
+        final queryResult = await Amplify.DataStore.query(TestModel.classType);
+        if (queryResult.isNotEmpty) {
+          final testModel = queryResult[0];
+          setState(() {
+            _testModel = testModel;
+          });
+        }
+      }
     });
   }
 
@@ -91,10 +104,15 @@ class _MyHomePageState extends State<MyHomePage> {
         testModel = TestModel(
           id: null,
           testInt: 0,
-          testString: 'testString-0',
-          enumVal: TestEnum.VALUE_ONE,
-          // intList: [1, 2, 3],
-          // enumList: [TestEnum.VALUE_ONE, TestEnum.VALUE_TWO],
+          testFloat: 1.1,
+          testString: 'string-0',
+          testBool: true,
+          testEnum: TestEnum.VALUE_ONE,
+          intList: [1, 2, 3],
+          floatList: [1.1, 2.2, 3.3],
+          stringList: ['s0', 's1', 's3'],
+          boolList: [true, false],
+          enumList: [TestEnum.VALUE_ONE, TestEnum.VALUE_TWO],
           // nullableEnumList: [
           //   null,
           //   TestEnum.VALUE_ONE,
@@ -110,21 +128,30 @@ class _MyHomePageState extends State<MyHomePage> {
         });
       }
     } else {
-      final nextEnumVal = testModel.enumVal == TestEnum.VALUE_ONE
+      final nextInt = testModel.testInt + 1;
+      final nextFloat = nextInt + 0.1;
+      final nextString = 'string-$nextInt';
+      final nextBool = nextInt % 2 == 0;
+      final nextEnumVal = testModel.testEnum == TestEnum.VALUE_ONE
           ? TestEnum.VALUE_TWO
           : TestEnum.VALUE_ONE;
-      // final nextEnumList = testModel.enumList.reversed.toList();
-      // final nextNullableEnumList = testModel.nullableEnumList.reversed.toList();
       testModel = TestModel(
         id: testModel.id,
-        testInt: testModel.testInt + 1,
-        testString: 'string-${testModel.testInt + 1}',
-        nullableInt:
-            testModel.nullableInt == null ? testModel.testInt + 1 : null,
-        // intList: testModel.intList.reversed.toList(),
-        enumVal: nextEnumVal,
-        nullableEnumVal: testModel.nullableEnumVal == null ? nextEnumVal : null,
-        // enumList: nextEnumList,
+        testInt: nextInt,
+        testFloat: nextFloat,
+        testString: nextString,
+        testBool: nextBool,
+        testEnum: nextEnumVal,
+        nullableInt: testModel.nullableInt == null ? nextInt : null,
+        nullableFloat: testModel.nullableFloat == null ? nextFloat : null,
+        nullableString: testModel.nullableString == null ? nextString : null,
+        nullableBool: testModel.nullableBool == null ? nextBool : null,
+        nullableEnum: testModel.nullableEnum == null ? nextEnumVal : null,
+        intList: _tryReverseIntList(testModel.intList),
+        floatList: testModel.floatList.reversed.toList(),
+        stringList: testModel.stringList.reversed.toList(),
+        boolList: testModel.boolList.reversed.toList(),
+        enumList: testModel.enumList.reversed.toList(),
         // nullableEnumList: nextNullableEnumList,
         // enumNullableList:
         //     testModel.enumNullableList == null ? nextEnumList : null,
@@ -136,10 +163,28 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  static List<int> _tryReverseIntList(List<int> intList) {
+    try {
+      return intList.reversed.toList();
+    } catch (ex) {
+      // Set to something that indicates error during enumeration.
+      return [99, 88, 77];
+    }
+  }
+
   void _deleteTestModel() async {
     if (_testModel != null) {
       await Amplify.DataStore.delete(_testModel);
     }
+  }
+
+  void _clearDataStore() async {
+    await Amplify.DataStore.clear();
+    setState(() {
+      _testModel = null;
+    });
+    // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
+    var _ = await Amplify.DataStore.query(TestModel.classType);
   }
 
   @override
@@ -148,7 +193,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,27 +213,64 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          FloatingActionButton(
-            onPressed: _deleteTestModel,
-            child: Icon(Icons.delete),
+          Container(
+            height: 40.0,
+            width: 100.0,
+            child: SizedBox(
+              child: FloatingActionButton.extended(
+                  onPressed: _clearDataStore, label: Text('clear DS')),
+            ),
           ),
-          FloatingActionButton(
-            onPressed: _incrementTestModel,
-            child: Icon(Icons.add),
+          Container(
+            height: 40.0,
+            width: 100.0,
+            child: SizedBox(
+              child: FloatingActionButton.extended(
+                  onPressed: _deleteTestModel, label: Text('delete')),
+            ),
+          ),
+          Container(
+            height: 40.0,
+            width: 100.0,
+            child: SizedBox(
+              child: FloatingActionButton.extended(
+                onPressed: _incrementTestModel,
+                label: Text('mutate'),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  List<Widget> _testModelView() => <Widget>[
-        Text('id: ${_testModel.id}'),
-        Text('testInt: ${_testModel.testInt}'),
-        Text('testString: ${_testModel.testString}'),
-        Text('nullableInt: ${_testModel.nullableInt}'),
-        // Text('intList: ${_testModel.intList}'),
-        Text('enumVal: ${_testModel.enumVal}'),
-        Text('nullableEnumVal: ${_testModel.nullableEnumVal}'),
-        // Text('enumList: ${_testModel.enumList}'),
-      ];
+  List<Widget> _testModelView() {
+    final intListStr = _tryGetIntListAsString(_testModel.intList);
+    return <Widget>[
+      Text('id: ${_testModel.id}'),
+      Text('testInt: ${_testModel.testInt}'),
+      Text('testFloat: ${_testModel.testFloat}'),
+      Text('testString: ${_testModel.testString}'),
+      Text('testBool: ${_testModel.testBool}'),
+      Text('testEnum: ${_testModel.testEnum}'),
+      Text('nullableInt: ${_testModel.nullableInt}'),
+      Text('nullableFloat: ${_testModel.nullableFloat}'),
+      Text('nullableString: ${_testModel.nullableString}'),
+      Text('nullableBool: ${_testModel.nullableBool}'),
+      Text('nullableEnum: ${_testModel.nullableEnum}'),
+      Text('intList: ${intListStr}'),
+      Text('floatList: ${_testModel.floatList}'),
+      Text('stringList: ${_testModel.stringList}'),
+      Text('boolList: ${_testModel.boolList}'),
+      Text('enumList: ${_testModel.enumList}'),
+    ];
+  }
+
+  static String _tryGetIntListAsString(List<int> intList) {
+    try {
+      return '$intList';
+    } catch (ex) {
+      return '$ex';
+    }
+  }
 }
