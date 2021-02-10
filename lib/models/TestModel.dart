@@ -68,7 +68,7 @@ class TestModel extends Model {
       this.enumList});
 
   factory TestModel(
-      {@required String id,
+      {String id,
       @required int testInt,
       @required double testFloat,
       @required String testString,
@@ -225,7 +225,9 @@ class TestModel extends Model {
         nullableBool = json['nullableBool'],
         nullableEnum =
             enumFromString<TestEnum>(json['nullableEnum'], TestEnum.values),
-        intList = json['intList']?.cast<int>(),
+        intList = (json['intList'] as List<dynamic>)
+            .map((dynamic e) => e is double ? e.toInt() : e as int)
+            .toList(),
         floatList = json['floatList']?.cast<double>(),
         stringList = json['stringList']?.cast<String>(),
         boolList = json['boolList']?.cast<bool>(),

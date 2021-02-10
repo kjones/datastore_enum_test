@@ -10,8 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  amplify_flutter: 0.0.2-dev.1
-  amplify_datastore: 0.0.2-dev.1
+  amplify_flutter: 0.0.2-dev.2
+  amplify_api: 0.0.2-dev.2
+  amplify_datastore: 0.0.2-dev.2
 
   cupertino_icons: ^1.0.0
 
@@ -20,6 +21,14 @@ dev_dependencies:
     sdk: flutter
   analyzer:
   pedantic:
+
+# dependency_overrides:
+#   amplify_core:
+#     path: ../amplify-flutter/packages/amplify_core
+#   amplify_flutter:
+#     path: ../amplify-flutter/packages/amplify_flutter
+#   amplify_datastore:
+#     path: ../amplify-flutter/packages/amplify_datastore
 
 flutter:
   uses-material-design: true

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amplify_flutter/amplify.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_datastore_plugin_interface/src/types/models/subscription_event.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,9 @@ import 'models/ModelProvider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  var apiPlugin = AmplifyAPI();
   var datastorePlugin = AmplifyDataStore(modelProvider: ModelProvider.instance);
-  await Amplify.addPlugin(datastorePlugin);
+  await Amplify.addPlugins([apiPlugin, datastorePlugin]);
   await Amplify.configure(amplifyconfig);
 
   // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
