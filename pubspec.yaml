@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  amplify_flutter: 0.0.2-dev.2
-  amplify_api: 0.0.2-dev.2
-  amplify_datastore: 0.0.2-dev.2
+  amplify_flutter: 0.1.0
+  amplify_api: 0.1.0
+  amplify_datastore: 0.1.0
 
   cupertino_icons: ^1.0.0
 

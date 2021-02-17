@@ -40,6 +40,11 @@ class TestModel extends Model {
   final List<String> stringList;
   final List<bool> boolList;
   final List<TestEnum> enumList;
+  final List<int> intNullableList;
+  final List<double> floatNullableList;
+  final List<String> stringNullableList;
+  final List<bool> boolNullableList;
+  final List<TestEnum> enumNullableList;
 
   @override
   getInstanceType() => classType;
@@ -61,11 +66,16 @@ class TestModel extends Model {
       this.nullableString,
       this.nullableBool,
       this.nullableEnum,
-      this.intList,
-      this.floatList,
-      this.stringList,
-      this.boolList,
-      this.enumList});
+      @required this.intList,
+      @required this.floatList,
+      @required this.stringList,
+      @required this.boolList,
+      @required this.enumList,
+      this.intNullableList,
+      this.floatNullableList,
+      this.stringNullableList,
+      this.boolNullableList,
+      this.enumNullableList});
 
   factory TestModel(
       {String id,
@@ -79,11 +89,16 @@ class TestModel extends Model {
       String nullableString,
       bool nullableBool,
       TestEnum nullableEnum,
-      List<int> intList,
-      List<double> floatList,
-      List<String> stringList,
-      List<bool> boolList,
-      List<TestEnum> enumList}) {
+      @required List<int> intList,
+      @required List<double> floatList,
+      @required List<String> stringList,
+      @required List<bool> boolList,
+      @required List<TestEnum> enumList,
+      List<int> intNullableList,
+      List<double> floatNullableList,
+      List<String> stringNullableList,
+      List<bool> boolNullableList,
+      List<TestEnum> enumNullableList}) {
     return TestModel._internal(
         id: id == null ? UUID.getUUID() : id,
         testInt: testInt,
@@ -101,7 +116,22 @@ class TestModel extends Model {
         stringList:
             stringList != null ? List.unmodifiable(stringList) : stringList,
         boolList: boolList != null ? List.unmodifiable(boolList) : boolList,
-        enumList: enumList != null ? List.unmodifiable(enumList) : enumList);
+        enumList: enumList != null ? List.unmodifiable(enumList) : enumList,
+        intNullableList: intNullableList != null
+            ? List.unmodifiable(intNullableList)
+            : intNullableList,
+        floatNullableList: floatNullableList != null
+            ? List.unmodifiable(floatNullableList)
+            : floatNullableList,
+        stringNullableList: stringNullableList != null
+            ? List.unmodifiable(stringNullableList)
+            : stringNullableList,
+        boolNullableList: boolNullableList != null
+            ? List.unmodifiable(boolNullableList)
+            : boolNullableList,
+        enumNullableList: enumNullableList != null
+            ? List.unmodifiable(enumNullableList)
+            : enumNullableList);
   }
 
   bool equals(Object other) {
@@ -127,7 +157,17 @@ class TestModel extends Model {
         DeepCollectionEquality().equals(floatList, other.floatList) &&
         DeepCollectionEquality().equals(stringList, other.stringList) &&
         DeepCollectionEquality().equals(boolList, other.boolList) &&
-        DeepCollectionEquality().equals(enumList, other.enumList);
+        DeepCollectionEquality().equals(enumList, other.enumList) &&
+        DeepCollectionEquality()
+            .equals(intNullableList, other.intNullableList) &&
+        DeepCollectionEquality()
+            .equals(floatNullableList, other.floatNullableList) &&
+        DeepCollectionEquality()
+            .equals(stringNullableList, other.stringNullableList) &&
+        DeepCollectionEquality()
+            .equals(boolNullableList, other.boolNullableList) &&
+        DeepCollectionEquality()
+            .equals(enumNullableList, other.enumNullableList);
   }
 
   @override
@@ -138,27 +178,31 @@ class TestModel extends Model {
     var buffer = new StringBuffer();
 
     buffer.write("TestModel {");
-    buffer.write("id=" + id + ", ");
+    buffer.write("id=" + "$id" + ", ");
     buffer.write(
         "testInt=" + (testInt != null ? testInt.toString() : "null") + ", ");
     buffer.write("testFloat=" +
         (testFloat != null ? testFloat.toString() : "null") +
         ", ");
-    buffer.write("testString=" + testString + ", ");
+    buffer.write("testString=" + "$testString" + ", ");
     buffer.write(
         "testBool=" + (testBool != null ? testBool.toString() : "null") + ", ");
-    buffer.write("testEnum=" + enumToString(testEnum) + ", ");
+    buffer.write("testEnum=" +
+        (testEnum != null ? enumToString(testEnum) : "null") +
+        ", ");
     buffer.write("nullableInt=" +
         (nullableInt != null ? nullableInt.toString() : "null") +
         ", ");
     buffer.write("nullableFloat=" +
         (nullableFloat != null ? nullableFloat.toString() : "null") +
         ", ");
-    buffer.write("nullableString=" + nullableString + ", ");
+    buffer.write("nullableString=" + "$nullableString" + ", ");
     buffer.write("nullableBool=" +
         (nullableBool != null ? nullableBool.toString() : "null") +
         ", ");
-    buffer.write("nullableEnum=" + enumToString(nullableEnum) + ", ");
+    buffer.write("nullableEnum=" +
+        (nullableEnum != null ? enumToString(nullableEnum) : "null") +
+        ", ");
     buffer.write(
         "intList=" + (intList != null ? intList.toString() : "null") + ", ");
     buffer.write("floatList=" +
@@ -169,8 +213,22 @@ class TestModel extends Model {
         ", ");
     buffer.write(
         "boolList=" + (boolList != null ? boolList.toString() : "null") + ", ");
-    buffer
-        .write("enumList=" + enumList?.map((e) => enumToString(e)).toString());
+    buffer.write(
+        "enumList=" + enumList?.map((e) => enumToString(e)).toString() + ", ");
+    buffer.write("intNullableList=" +
+        (intNullableList != null ? intNullableList.toString() : "null") +
+        ", ");
+    buffer.write("floatNullableList=" +
+        (floatNullableList != null ? floatNullableList.toString() : "null") +
+        ", ");
+    buffer.write("stringNullableList=" +
+        (stringNullableList != null ? stringNullableList.toString() : "null") +
+        ", ");
+    buffer.write("boolNullableList=" +
+        (boolNullableList != null ? boolNullableList.toString() : "null") +
+        ", ");
+    buffer.write("enumNullableList=" +
+        enumNullableList?.map((e) => enumToString(e)).toString());
     buffer.write("}");
 
     return buffer.toString();
@@ -192,7 +250,12 @@ class TestModel extends Model {
       List<double> floatList,
       List<String> stringList,
       List<bool> boolList,
-      List<TestEnum> enumList}) {
+      List<TestEnum> enumList,
+      List<int> intNullableList,
+      List<double> floatNullableList,
+      List<String> stringNullableList,
+      List<bool> boolNullableList,
+      List<TestEnum> enumNullableList}) {
     return TestModel(
         id: id ?? this.id,
         testInt: testInt ?? this.testInt,
@@ -209,7 +272,12 @@ class TestModel extends Model {
         floatList: floatList ?? this.floatList,
         stringList: stringList ?? this.stringList,
         boolList: boolList ?? this.boolList,
-        enumList: enumList ?? this.enumList);
+        enumList: enumList ?? this.enumList,
+        intNullableList: intNullableList ?? this.intNullableList,
+        floatNullableList: floatNullableList ?? this.floatNullableList,
+        stringNullableList: stringNullableList ?? this.stringNullableList,
+        boolNullableList: boolNullableList ?? this.boolNullableList,
+        enumNullableList: enumNullableList ?? this.enumNullableList);
   }
 
   TestModel.fromJson(Map<String, dynamic> json)
@@ -226,13 +294,24 @@ class TestModel extends Model {
         nullableEnum =
             enumFromString<TestEnum>(json['nullableEnum'], TestEnum.values),
         intList = (json['intList'] as List<dynamic>)
-            .map((dynamic e) => e is double ? e.toInt() : e as int)
-            .toList(),
+            ?.map((dynamic e) => e is double ? e.toInt() : e as int)
+            ?.toList(),
         floatList = json['floatList']?.cast<double>(),
         stringList = json['stringList']?.cast<String>(),
         boolList = json['boolList']?.cast<bool>(),
         enumList = json['enumList'] is List
             ? (json['enumList'] as List)
+                .map((e) => enumFromString<TestEnum>(e, TestEnum.values))
+                .toList()
+            : null,
+        intNullableList = (json['intNullableList'] as List<dynamic>)
+            ?.map((dynamic e) => e is double ? e.toInt() : e as int)
+            ?.toList(),
+        floatNullableList = json['floatNullableList']?.cast<double>(),
+        stringNullableList = json['stringNullableList']?.cast<String>(),
+        boolNullableList = json['boolNullableList']?.cast<bool>(),
+        enumNullableList = json['enumNullableList'] is List
+            ? (json['enumNullableList'] as List)
                 .map((e) => enumFromString<TestEnum>(e, TestEnum.values))
                 .toList()
             : null;
@@ -253,7 +332,13 @@ class TestModel extends Model {
         'floatList': floatList,
         'stringList': stringList,
         'boolList': boolList,
-        'enumList': enumList?.map((e) => enumToString(e))?.toList()
+        'enumList': enumList?.map((e) => enumToString(e))?.toList(),
+        'intNullableList': intNullableList,
+        'floatNullableList': floatNullableList,
+        'stringNullableList': stringNullableList,
+        'boolNullableList': boolNullableList,
+        'enumNullableList':
+            enumNullableList?.map((e) => enumToString(e))?.toList()
       };
 
   static final QueryField ID = QueryField(fieldName: "testModel.id");
@@ -274,6 +359,16 @@ class TestModel extends Model {
   static final QueryField STRINGLIST = QueryField(fieldName: "stringList");
   static final QueryField BOOLLIST = QueryField(fieldName: "boolList");
   static final QueryField ENUMLIST = QueryField(fieldName: "enumList");
+  static final QueryField INTNULLABLELIST =
+      QueryField(fieldName: "intNullableList");
+  static final QueryField FLOATNULLABLELIST =
+      QueryField(fieldName: "floatNullableList");
+  static final QueryField STRINGNULLABLELIST =
+      QueryField(fieldName: "stringNullableList");
+  static final QueryField BOOLNULLABLELIST =
+      QueryField(fieldName: "boolNullableList");
+  static final QueryField ENUMNULLABLELIST =
+      QueryField(fieldName: "enumNullableList");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "TestModel";
@@ -333,34 +428,69 @@ class TestModel extends Model {
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: TestModel.INTLIST,
-        isRequired: false,
+        isRequired: true,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.int))));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: TestModel.FLOATLIST,
-        isRequired: false,
+        isRequired: true,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.double))));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: TestModel.STRINGLIST,
-        isRequired: false,
+        isRequired: true,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.string))));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: TestModel.BOOLLIST,
-        isRequired: false,
+        isRequired: true,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.bool))));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: TestModel.ENUMLIST,
+        isRequired: true,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.enumeration))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.INTNULLABLELIST,
+        isRequired: false,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.int))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.FLOATNULLABLELIST,
+        isRequired: false,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.double))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.STRINGNULLABLELIST,
+        isRequired: false,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.string))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.BOOLNULLABLELIST,
+        isRequired: false,
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.bool))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: TestModel.ENUMNULLABLELIST,
         isRequired: false,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
