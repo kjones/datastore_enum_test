@@ -17,9 +17,6 @@ void main() async {
   await Amplify.addPlugins([apiPlugin, datastorePlugin]);
   await Amplify.configure(amplifyconfig);
 
-  // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
-  final _ = await Amplify.DataStore.query(TestModel.classType);
-
   runApp(MyApp());
 }
 
@@ -54,12 +51,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     _listenForDataStoreHubEvents();
+
+    // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
+    Amplify.DataStore.query(TestModel.classType);
   }
 
   @override
   void dispose() {
     _streamSubscription?.cancel();
+    _streamSubscription = null;
+
     super.dispose();
   }
 
@@ -193,16 +196,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _clearDataStore() async {
     print('Cancelling TestModel subscription');
-    await _streamSubscription?.cancel();
+    await _streamSubscription.cancel();
     _streamSubscription = null;
 
-    await Amplify.DataStore.clear();
     setState(() {
       _testModel = null;
     });
 
+    await Amplify.DataStore.clear();
+
     // Kickstart DataStore by submitting a query. Start/stop not available in Flutter.
-    final _ = await Amplify.DataStore.query(TestModel.classType);
+    await Amplify.DataStore.query(TestModel.classType);
   }
 
   @override
