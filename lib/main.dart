@@ -133,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static TestModel _createInitialTestModel() => TestModel(
         id: null,
         testInt: 1,
-        testFloat: 1.1,
+        testFloat: 1,
         testString: 'string-0',
         testBool: true,
         testEnum: TestEnum.VALUE_ONE,
@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static TestModel _generateNextTestModel(TestModel testModel) {
     final nextInt = testModel.testInt + 1;
-    final nextFloat = nextInt + 0.1;
+    final nextFloat = nextInt.toDouble();
     final nextString = 'string-$nextInt';
     final nextBool = nextInt % 2 == 0;
     final nextEnumVal = testModel.testEnum == TestEnum.VALUE_ONE
